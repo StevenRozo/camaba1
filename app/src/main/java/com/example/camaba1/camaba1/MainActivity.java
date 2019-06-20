@@ -61,29 +61,21 @@ public class MainActivity extends AppCompatActivity
 
 
     ArrayList<Notificaciones> listarNotificaciones;
-
-
     TextView txt_prue;
-
     RecyclerView RecyclerNotificaciones;
-
     TableRow esp_busqueda;
-
     RequestQueue rq;
   //  ArrayList<String> lista = new ArrayList<String>(  );
 
     ListView lista_resultado;
-    String nombreProducto;
+    String TokenUsuario;
 
     // RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
 
     int contador=1;
-
     public String banderColor="0";
-
     ProgressDialog dialog;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,9 +83,6 @@ public class MainActivity extends AppCompatActivity
         setContentView( R.layout.activity_main );
         Toolbar toolbar = (Toolbar) findViewById( R.id.toolbar );
         setSupportActionBar( toolbar );
-
-
-
 
         rq = Volley.newRequestQueue(this);
 
@@ -123,16 +112,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById( R.id.nav_view );
         navigationView.setNavigationItemSelectedListener( this );
 
-       //txt_prue = (TextView) findViewById( R.id.txt_prue );
-       // lista_resultado = (ListView) findViewById( R.id.lista_resultado );
-
-
-
 
     }
-
-
-
 
     @Override
     public void onBackPressed() {
@@ -219,78 +200,6 @@ public class MainActivity extends AppCompatActivity
 
 
 
-
-
-
-    //Consulta de notificaciones
-
-   /*
-
-    private void ConsultaNotificaciones(){
-
-        String url ="http://bigencode.com/ubot/notificaciones/listar_notificaciones.php?Mens_id_usu_envia=8";
-
-        JsonObjectRequest request = new JsonObjectRequest( Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-
-                try {
-                    JSONArray jsonArray= response.getJSONArray("datos");
-
-                   // Toast.makeText(MainActivity.this,"r: "+response, Toast.LENGTH_SHORT).show();
-
-                    for(int i=0; i<jsonArray.length();i++){
-
-
-
-
-                        // cont_prod.setProd_id(jsonObject.optString("prod_id"));
-                        //
-
-                        //  String nombre = jsonObject.getString( "prod_nombre" );
-                        //  Toast.makeText(this, "P: "+nombre, Toast.LENGTH_SHORT).show();
-
-                        //cont_prod.setProd_nombre(jsonObject.getString("prod_nombre"));
-
-                        nombreProducto = jsonArray.getJSONObject( i ).getString( "Mens_mensaje_envio"  );
-
-
-                        lista.add(nombreProducto);
-
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                cargarListView();
-
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(MainActivity.this,"No tienes notificaciones", Toast.LENGTH_SHORT).show();
-
-
-            }
-        });
-
-        rq.add(request);
-
-    }
-
-
-    private void cargarListView(){
-
-       // Toast.makeText(MainActivity.this,"t: "+lista, Toast.LENGTH_SHORT).show();
-        //lista_resultado.setAdapter(null);
-
-
-        ArrayAdapter<CharSequence> a= new ArrayAdapter(MainActivity.this,R.layout.support_simple_spinner_dropdown_item,lista);
-        lista_resultado.setAdapter(a);
-    }
-*/
-
     private void ConsultaNotificaciones(){
 
         dialog=new ProgressDialog(MainActivity.this);
@@ -337,10 +246,12 @@ public class MainActivity extends AppCompatActivity
             adapter.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getApplicationContext(),
-                            "Selección: "+listarNotificaciones.get
-                                    (RecyclerNotificaciones.getChildAdapterPosition(v))
-                                    .getMens_id_usu_envia(),Toast.LENGTH_SHORT).show();
+
+
+                  //  Toast.makeText(getApplicationContext(), "Selección: "+listarNotificaciones.get(RecyclerNotificaciones.getChildAdapterPosition(v)).getMens_id_usu_envia(),Toast.LENGTH_SHORT).show();
+
+                    String id_usuario = listarNotificaciones.get(RecyclerNotificaciones.getChildAdapterPosition(v)).getMens_id_usu_envia();
+                    ConsultarToken(id_usuario);
                 }
             } );
 
@@ -360,7 +271,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-
     @Override
     public void onErrorResponse(VolleyError error) {
 
@@ -370,9 +280,47 @@ public class MainActivity extends AppCompatActivity
        // dialog.hide();
         Log.d("ERROR: ", error.toString());
 
+    }
 
 
 
+    private void ConsultarToken(String id_usuario){
+
+        String url ="http://bigencode.com/ubot/notificaciones/listar_tokenUsuario.php?id_usuario="+id_usuario;
+
+        JsonObjectRequest request = new JsonObjectRequest( Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+                try {
+                    JSONArray jsonArray= response.getJSONArray("datos");
+
+                    // Toast.makeText(MainActivity.this,"r: "+response, Toast.LENGTH_SHORT).show();
+
+                    for(int i=0; i<jsonArray.length();i++){
+
+                        TokenUsuario = jsonArray.getJSONObject( i ).getString( "Token"  );
+
+                    }
+
+                    Toast.makeText(MainActivity.this,"Token: "+TokenUsuario, Toast.LENGTH_SHORT).show();
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MainActivity.this,"No tienes notificaciones", Toast.LENGTH_SHORT).show();
+
+
+            }
+        });
+
+        rq.add(request);
 
     }
 
