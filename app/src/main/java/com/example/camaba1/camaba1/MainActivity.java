@@ -295,7 +295,7 @@ public class MainActivity extends AppCompatActivity
 
         dialog=new ProgressDialog(MainActivity.this);
         dialog.setMessage("Consultando Historial");
-        dialog.show();
+       // dialog.show();
 
 
         String url="http://bigencode.com/ubot/notificaciones/listar_notificaciones.php?Mens_id_usu_envia=8";
@@ -320,17 +320,34 @@ public class MainActivity extends AppCompatActivity
                 jsonObject=json.getJSONObject(i);
 
                 notificaciones.setIdMensajeNotif( jsonObject.optString( "Mens_mensaje_envio" ) );
+                notificaciones.setMens_id_usu_envia( jsonObject.optString( "Mens_id_usu_envia" ) );
+
+
 
                 listarNotificaciones.add(notificaciones);
             }
             dialog.hide();
             Notificaciones_adapter adapter=new Notificaciones_adapter(listarNotificaciones, getApplicationContext());
-            adapter.notifyDataSetChanged();
+          //  adapter.notifyDataSetChanged();
 
             RecyclerNotificaciones =(RecyclerView) findViewById( R.id.RecyclerNotificaciones );
             RecyclerNotificaciones.setHasFixedSize( true );
             RecyclerNotificaciones.setLayoutManager( new LinearLayoutManager( this ) );
+
+            adapter.setOnClickListener( new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getApplicationContext(),
+                            "Selección: "+listarNotificaciones.get
+                                    (RecyclerNotificaciones.getChildAdapterPosition(v))
+                                    .getMens_id_usu_envia(),Toast.LENGTH_SHORT).show();
+                }
+            } );
+
+
             RecyclerNotificaciones.setAdapter(adapter);
+
+
 
            // Toast.makeText(getApplicationContext(), "Mens: ", Toast.LENGTH_SHORT).show();
 
@@ -350,7 +367,7 @@ public class MainActivity extends AppCompatActivity
 
         Toast.makeText(MainActivity.this, "No se puede conectar "+error.toString(), Toast.LENGTH_LONG).show();
         System.out.println();
-        dialog.hide();
+       // dialog.hide();
         Log.d("ERROR: ", error.toString());
 
 
