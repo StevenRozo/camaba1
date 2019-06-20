@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_settings2"
+        android:orderInCategory="100"
+        android:title="@string/action_settings2"
+        app:showAsAction="never" />
+
+
+    <item
+        android:id="@+id/action_campana"
+        android:orderInCategory="100"
+        android:title="@string/action_campana"
+        android:icon="@drawable/ic_action_campananegra"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_campanaB"
+        android:orderInCategory="100"
+        android:title="@string/action_campanab"
+        android:icon="@drawable/ic_action_campana"
+        app:showAsAction="ifRoom" />
+
+</menu>
