@@ -9,4 +9,7 @@
     <string name="action_settings2">settings2</string>
     <string name="action_campana">campana</string>
     <string name="action_campanab">campanab</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

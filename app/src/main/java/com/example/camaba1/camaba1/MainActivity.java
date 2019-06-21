@@ -14,6 +14,8 @@ import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -103,7 +105,7 @@ public class MainActivity extends AppCompatActivity
         esp_busqueda = (TableRow) findViewById( R.id.esp_busqueda );
 
 
-        DrawerLayout drawer = (DrawerLayout) findViewById( R.id.drawer_layout );
+        DrawerLayout drawer = (DrawerLayout) findViewById( R.id.escenario);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close );
         drawer.addDrawerListener( toggle );
@@ -117,7 +119,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById( R.id.drawer_layout );
+        DrawerLayout drawer = (DrawerLayout) findViewById( R.id.escenario );
         if (drawer.isDrawerOpen( GravityCompat.START )) {
             drawer.closeDrawer( GravityCompat.START );
         } else {
@@ -193,7 +195,7 @@ public class MainActivity extends AppCompatActivity
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById( R.id.drawer_layout );
+        DrawerLayout drawer = (DrawerLayout) findViewById( R.id.escenario );
         drawer.closeDrawer( GravityCompat.START );
         return true;
     }
@@ -207,7 +209,7 @@ public class MainActivity extends AppCompatActivity
        // dialog.show();
 
 
-        String url="http://bigencode.com/ubot/notificaciones/listar_notificaciones.php?Mens_id_usu_envia=8";
+        String url="http://bigencode.com/ubot/notificaciones/listar_notificaciones.php?Mens_id_usu_recibe=8";
         jsonObjectRequest=new JsonObjectRequest(Request.Method.GET,url,null, this,this);
         // request.add(jsonObjectRequest);
         VolleySingleton.getIntanciaVolley(MainActivity.this).addToRequestQueue(jsonObjectRequest);
@@ -303,8 +305,9 @@ public class MainActivity extends AppCompatActivity
 
                     }
 
-                    Toast.makeText(MainActivity.this,"Token: "+TokenUsuario, Toast.LENGTH_SHORT).show();
+                  //  Toast.makeText(MainActivity.this,"Token: "+TokenUsuario, Toast.LENGTH_SHORT).show();
 
+                    PasoAFragmentResponderNotificacion(TokenUsuario);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -323,6 +326,26 @@ public class MainActivity extends AppCompatActivity
         rq.add(request);
 
     }
+
+        private void PasoAFragmentResponderNotificacion(String TokenUsuario){
+
+
+        fracment_responder_notificacion responder_notificacion = new fracment_responder_notificacion();
+
+        Bundle args = new Bundle( );
+        args.putString( "Token" ,TokenUsuario);
+
+        responder_notificacion.setArguments(args);
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add(R.id.content_main,responder_notificacion,null);
+            fragmentTransaction.commit();
+
+
+
+
+        }
 
 
 }

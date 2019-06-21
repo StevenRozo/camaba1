@@ -41,8 +41,6 @@ public class Notificaciones_adapter extends RecyclerView.Adapter<Notificaciones_
         holder.Mens_id_usu_envia.setText(listaitems.get(position).getMens_id_usu_envia());
 
 
-
-
     }
 
     @Override
