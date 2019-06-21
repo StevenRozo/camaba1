@@ -87,9 +87,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onNewToken(String token) {
-        Log.d(TAG,"Refreshed Token"+token);
+        Log.d(TAG,"Refreshed Token "+token);
 
         FirebaseMessaging.getInstance().subscribeToTopic( "dispositivosotros" );
+
+
         enviarTokenToServer(token);
     }
 

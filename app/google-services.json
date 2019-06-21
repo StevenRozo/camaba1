@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "417475321787",
+    "firebase_url": "https://camba1.firebaseio.com",
+    "project_id": "camba1",
+    "storage_bucket": "camba1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:417475321787:android:2195e002e63165c1",
+        "android_client_info": {
+          "package_name": "com.example.camaba1.camaba1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "417475321787-23bbo6fa0mt4n0jvisgad5vablecp3q1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.camaba1.camaba1",
+            "certificate_hash": "8ac83ed2feb3ea9417df5e90e050a9c5d82975a7"
+          }
+        },
+        {
+          "client_id": "417475321787-jaeohci35ms98ul0k3oav2b5tt91rcmq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbzVSzW9tW9A_62wejLP78knP-xvmXdCc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "417475321787-jaeohci35ms98ul0k3oav2b5tt91rcmq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
