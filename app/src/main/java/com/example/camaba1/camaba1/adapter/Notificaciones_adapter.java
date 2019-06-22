@@ -48,10 +48,16 @@ public class Notificaciones_adapter extends RecyclerView.Adapter<Notificaciones_
         return listaitems.size();
     }
 
+    public Notificaciones getItem(int arg0) {
+        return listaitems.get(getItemCount()- arg0 - 1);
+    }
+
     public void setOnClickListener(View.OnClickListener listener){
         this.listener =listener;
 
     }
+
+
 
     @Override
     public void onClick(View view) {

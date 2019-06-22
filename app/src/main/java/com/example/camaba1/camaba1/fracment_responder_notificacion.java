@@ -67,7 +67,7 @@ public class fracment_responder_notificacion extends Fragment {
         cambaSi.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                enviarTokenToServer("AceptocambalacheGlobal",TokenUsuariEnvia,IdUsuarioEnvia);
+                enviarTokenToServer("AceptocambalacheVirtual",TokenUsuariEnvia,IdUsuarioEnvia);
 
             }
         } );
@@ -75,7 +75,7 @@ public class fracment_responder_notificacion extends Fragment {
         cambaNo.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                enviarTokenToServer("NograciasGlobal!",TokenUsuariEnvia,IdUsuarioEnvia);
+                enviarTokenToServer("NograciasVirtual!",TokenUsuariEnvia,IdUsuarioEnvia);
             }
         } );
 
@@ -86,7 +86,7 @@ public class fracment_responder_notificacion extends Fragment {
 
     private void enviarTokenToServer(final String Cuerpo, String TokenUsuariEnvia,String IdUsuarioEnviaD) {
 
-        GuardarNotificacion("17",IdUsuarioEnviaD,Cuerpo,"1");
+        GuardarNotificacion("19",IdUsuarioEnviaD,Cuerpo,"1");
 
         StringRequest stringRequest = new StringRequest( Request.Method.POST, "http://bigencode.com/ubot/notificaciones/enviarNotificacion.php?token="+TokenUsuariEnvia, new Response.Listener<String>() {
             @Override
@@ -111,7 +111,6 @@ public class fracment_responder_notificacion extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue( getContext() );
         requestQueue.add(stringRequest);
     }
-
 
     private void GuardarNotificacion(String mens_id_usu_envia,String mens_id_usu_recibe,String mens_mensaje_envio,String mens_estado_mensaje){
 

@@ -54,6 +54,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 import static java.security.AccessController.getContext;
 
@@ -61,6 +63,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Response.ErrorListener, Response.Listener<JSONObject> {
 
 
+    private LinearLayoutManager mLayoutManager;
 
     ArrayList<Notificaciones> listarNotificaciones;
     TextView txt_prue;
@@ -102,6 +105,8 @@ public class MainActivity extends AppCompatActivity
         listarNotificaciones = new ArrayList<>(  );
         RecyclerNotificaciones =(RecyclerView) findViewById( R.id.RecyclerNotificaciones );
 
+
+
         esp_busqueda = (TableRow) findViewById( R.id.esp_busqueda );
 
 
@@ -113,6 +118,11 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById( R.id.nav_view );
         navigationView.setNavigationItemSelectedListener( this );
+
+
+
+
+
 
 
     }
@@ -209,7 +219,7 @@ public class MainActivity extends AppCompatActivity
        // dialog.show();
 
 
-        String url="http://bigencode.com/ubot/notificaciones/listar_notificaciones.php?Mens_id_usu_recibe=17";
+        String url="http://bigencode.com/ubot/notificaciones/listar_notificaciones.php?Mens_id_usu_recibe=19";
         jsonObjectRequest=new JsonObjectRequest(Request.Method.GET,url,null, this,this);
         // request.add(jsonObjectRequest);
         VolleySingleton.getIntanciaVolley(MainActivity.this).addToRequestQueue(jsonObjectRequest);
@@ -257,12 +267,18 @@ public class MainActivity extends AppCompatActivity
                 }
             } );
 
+            RecyclerNotificaciones.setLayoutManager(new LinearLayoutManager( this ) );
+            Collections.reverse(listarNotificaciones);
 
             RecyclerNotificaciones.setAdapter(adapter);
 
 
 
-           // Toast.makeText(getApplicationContext(), "Mens: ", Toast.LENGTH_SHORT).show();
+
+
+
+
+            // Toast.makeText(getApplicationContext(), "Mens: ", Toast.LENGTH_SHORT).show();
 
         } catch (JSONException e) {
             e.printStackTrace();
