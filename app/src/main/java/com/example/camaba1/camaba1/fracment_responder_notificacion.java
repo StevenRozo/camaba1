@@ -15,8 +15,13 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Hashtable;
 import java.util.Map;
@@ -26,7 +31,9 @@ public class fracment_responder_notificacion extends Fragment {
 
    // public static final String Token="Token";
 
-    private String Token;
+    RequestQueue rq;
+
+    private String TokenUsuariEnvia, IdUsuarioEnvia;
 
     TextView id_responder;
     Button cambaSi,cambaNo;
@@ -39,6 +46,7 @@ public class fracment_responder_notificacion extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        rq = Volley.newRequestQueue(getContext());
        View view=  inflater.inflate( R.layout.fragment_fracment_responder_notificacion, container, false );
 
         id_responder =(TextView) view.findViewById( R.id.id_responder );
@@ -49,7 +57,9 @@ public class fracment_responder_notificacion extends Fragment {
 
         if(getArguments() !=null){
 
-            Token = getArguments().getString("Token" );
+            TokenUsuariEnvia = getArguments().getString("Token" );
+            IdUsuarioEnvia = getArguments().getString("IdUsuariEnvia" );
+
 
 
         }
@@ -57,14 +67,15 @@ public class fracment_responder_notificacion extends Fragment {
         cambaSi.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                enviarTokenToServer("Acepto cambalache",Token);
+                enviarTokenToServer("AceptocambalacheGlobal",TokenUsuariEnvia,IdUsuarioEnvia);
+
             }
         } );
 
         cambaNo.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                enviarTokenToServer("No gracias !",Token);
+                enviarTokenToServer("NograciasGlobal!",TokenUsuariEnvia,IdUsuarioEnvia);
             }
         } );
 
@@ -73,12 +84,15 @@ public class fracment_responder_notificacion extends Fragment {
 
     }
 
-    private void enviarTokenToServer(final String Cuerpo, String token) {
-        StringRequest stringRequest = new StringRequest( Request.Method.POST, "http://bigencode.com/ubot/notificaciones/enviarNotificacion.php?token="+token, new Response.Listener<String>() {
+    private void enviarTokenToServer(final String Cuerpo, String TokenUsuariEnvia,String IdUsuarioEnviaD) {
+
+        GuardarNotificacion("17",IdUsuarioEnviaD,Cuerpo,"1");
+
+        StringRequest stringRequest = new StringRequest( Request.Method.POST, "http://bigencode.com/ubot/notificaciones/enviarNotificacion.php?token="+TokenUsuariEnvia, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Toast.makeText( getContext(), "Se envió el mensaje correctamente", Toast.LENGTH_LONG ).show();
-              //  GuardarMensaje();
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -96,6 +110,28 @@ public class fracment_responder_notificacion extends Fragment {
 
         RequestQueue requestQueue = Volley.newRequestQueue( getContext() );
         requestQueue.add(stringRequest);
+    }
+
+
+    private void GuardarNotificacion(String mens_id_usu_envia,String mens_id_usu_recibe,String mens_mensaje_envio,String mens_estado_mensaje){
+
+        StringRequest stringRequest = new StringRequest( Request.Method.POST, "http://bigencode.com/ubot/notificaciones/guardar_mensaje.php?mens_id_usu_envia="+mens_id_usu_envia+
+                "&mens_id_usu_recibe="+mens_id_usu_recibe+"&mens_mensaje_envio="+mens_mensaje_envio+"&mens_estado_mensaje="+mens_estado_mensaje, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText( getContext(), "Se guradó el mensaje correctamente", Toast.LENGTH_LONG ).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText( getContext(), "Error en la conexión", Toast.LENGTH_LONG ).show();
+            }
+        });
+
+
+        RequestQueue requestQueue = Volley.newRequestQueue( getContext() );
+        requestQueue.add(stringRequest);
+
     }
 
 

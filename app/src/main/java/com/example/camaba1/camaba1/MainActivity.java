@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity
   //  ArrayList<String> lista = new ArrayList<String>(  );
 
     ListView lista_resultado;
-    String TokenUsuario;
+    String TokenUsuario,IdUsuarioEnvia;
 
     // RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
@@ -209,7 +209,7 @@ public class MainActivity extends AppCompatActivity
        // dialog.show();
 
 
-        String url="http://bigencode.com/ubot/notificaciones/listar_notificaciones.php?Mens_id_usu_recibe=8";
+        String url="http://bigencode.com/ubot/notificaciones/listar_notificaciones.php?Mens_id_usu_recibe=17";
         jsonObjectRequest=new JsonObjectRequest(Request.Method.GET,url,null, this,this);
         // request.add(jsonObjectRequest);
         VolleySingleton.getIntanciaVolley(MainActivity.this).addToRequestQueue(jsonObjectRequest);
@@ -302,12 +302,13 @@ public class MainActivity extends AppCompatActivity
                     for(int i=0; i<jsonArray.length();i++){
 
                         TokenUsuario = jsonArray.getJSONObject( i ).getString( "Token"  );
+                        IdUsuarioEnvia =jsonArray.getJSONObject( i ).getString( "id"  );
 
                     }
 
                   //  Toast.makeText(MainActivity.this,"Token: "+TokenUsuario, Toast.LENGTH_SHORT).show();
 
-                    PasoAFragmentResponderNotificacion(TokenUsuario);
+                    PasoAFragmentResponderNotificacion(TokenUsuario,IdUsuarioEnvia);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -327,13 +328,14 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-        private void PasoAFragmentResponderNotificacion(String TokenUsuario){
+        private void PasoAFragmentResponderNotificacion(String TokenUsuarioEnvia, String IdUsuariEnvia){
 
 
         fracment_responder_notificacion responder_notificacion = new fracment_responder_notificacion();
 
         Bundle args = new Bundle( );
-        args.putString( "Token" ,TokenUsuario);
+        args.putString( "Token" ,TokenUsuarioEnvia);
+        args.putString( "IdUsuariEnvia",IdUsuariEnvia );
 
         responder_notificacion.setArguments(args);
 
