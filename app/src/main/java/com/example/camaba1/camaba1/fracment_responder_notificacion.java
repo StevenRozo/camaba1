@@ -60,14 +60,12 @@ public class fracment_responder_notificacion extends Fragment {
             TokenUsuariEnvia = getArguments().getString("Token" );
             IdUsuarioEnvia = getArguments().getString("IdUsuariEnvia" );
 
-
-
         }
 
         cambaSi.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                enviarTokenToServer("AceptocambalacheVirtual",TokenUsuariEnvia,IdUsuarioEnvia);
+                enviarTokenToServer("AceptocambalacheAnder",TokenUsuariEnvia,IdUsuarioEnvia);
 
             }
         } );
@@ -75,7 +73,7 @@ public class fracment_responder_notificacion extends Fragment {
         cambaNo.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                enviarTokenToServer("NograciasVirtual!",TokenUsuariEnvia,IdUsuarioEnvia);
+                enviarTokenToServer("NograciasAnder!",TokenUsuariEnvia,IdUsuarioEnvia);
             }
         } );
 
@@ -86,7 +84,7 @@ public class fracment_responder_notificacion extends Fragment {
 
     private void enviarTokenToServer(final String Cuerpo, String TokenUsuariEnvia,String IdUsuarioEnviaD) {
 
-        GuardarNotificacion("19",IdUsuarioEnviaD,Cuerpo,"1");
+        GuardarNotificacion("20",IdUsuarioEnviaD,Cuerpo,"1");
 
         StringRequest stringRequest = new StringRequest( Request.Method.POST, "http://bigencode.com/ubot/notificaciones/enviarNotificacion.php?token="+TokenUsuariEnvia, new Response.Listener<String>() {
             @Override
@@ -127,14 +125,9 @@ public class fracment_responder_notificacion extends Fragment {
             }
         });
 
-
         RequestQueue requestQueue = Volley.newRequestQueue( getContext() );
         requestQueue.add(stringRequest);
 
     }
-
-
-
-
 
 }

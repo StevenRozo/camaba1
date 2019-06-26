@@ -1,14 +1,19 @@
 package com.example.camaba1.camaba1;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.LightingColorFilter;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -16,6 +21,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,6 +40,7 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -59,8 +67,9 @@ import java.util.Collections;
 
 import static java.security.AccessController.getContext;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, Response.ErrorListener, Response.Listener<JSONObject> {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, Response.ErrorListener, Response.Listener<JSONObject> {
+
+
 
 
     private LinearLayoutManager mLayoutManager;
@@ -96,35 +105,76 @@ public class MainActivity extends AppCompatActivity
 
 
         //instanciamiento del servicio NotificacionService
-
+/*
         Intent intent = new Intent(getApplicationContext(), NotificacionService.class);
         //Se inicia el servicio
         startService(intent);
-
+*/
 
         listarNotificaciones = new ArrayList<>(  );
         RecyclerNotificaciones =(RecyclerView) findViewById( R.id.RecyclerNotificaciones );
-
-
-
         esp_busqueda = (TableRow) findViewById( R.id.esp_busqueda );
 
 
+
         DrawerLayout drawer = (DrawerLayout) findViewById( R.id.escenario);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close );
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle( this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close );
         drawer.addDrawerListener( toggle );
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById( R.id.nav_view );
-        navigationView.setNavigationItemSelectedListener( this );
 
 
 
+       // ConsultaNotificaciones();
+        RecyclerNotificaciones.setVisibility(View.INVISIBLE );
+
+        MainActivity.time time = new MainActivity.time();
+        time.execute();
 
 
 
+    }
 
+    public class time extends AsyncTask<Void,Integer,Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+
+            hilo();
+
+
+            return true;
+        }
+
+
+        public void ejecutarTiempo() {
+            MainActivity.time time = new MainActivity.time();
+            time.execute();
+
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+
+            ejecutarTiempo();
+
+            // line de codigo de instancia de la librería Volley
+
+
+            ConsultaNotificaciones();
+
+
+            //Toast.makeText(getApplicationContext(), "cada 5 segundos", Toast.LENGTH_SHORT).show();
+
+        }
+    }
+
+    public void hilo(){
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -139,18 +189,18 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate( R.menu.main, menu );
+
+
         return true;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
+
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
@@ -164,7 +214,7 @@ public class MainActivity extends AppCompatActivity
 
 
            // ConsultaNotificaciones();
-            ConsultaNotificaciones();
+            ListarEnRecyclerView();
             contador=contador+1;
 
             if(contador%2!=0){
@@ -177,7 +227,7 @@ public class MainActivity extends AppCompatActivity
                 esp_busqueda.setVisibility( View.INVISIBLE );
             }
 
-         //   Drawable myIcon = getResources().getDrawable( R.drawable.ic_action_campananegra ); ColorFilter filter = new LightingColorFilter( Color.GRAY, Color.GRAY); myIcon.setColorFilter(filter);
+         //  Drawable myIcon = getResources().getDrawable( R.drawable.ic_action_campananegra ); ColorFilter filter = new LightingColorFilter( Color.RED, Color.RED); myIcon.setColorFilter(filter);
 
             return true;
         }
@@ -211,15 +261,13 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
     private void ConsultaNotificaciones(){
 
         dialog=new ProgressDialog(MainActivity.this);
         dialog.setMessage("Consultando Historial");
        // dialog.show();
 
-
-        String url="http://bigencode.com/ubot/notificaciones/listar_notificaciones.php?Mens_id_usu_recibe=19";
+        String url="http://bigencode.com/ubot/notificaciones/listar_notificaciones.php?Mens_id_usu_recibe=20";
         jsonObjectRequest=new JsonObjectRequest(Request.Method.GET,url,null, this,this);
         // request.add(jsonObjectRequest);
         VolleySingleton.getIntanciaVolley(MainActivity.this).addToRequestQueue(jsonObjectRequest);
@@ -240,40 +288,27 @@ public class MainActivity extends AppCompatActivity
                 JSONObject jsonObject=null;
                 jsonObject=json.getJSONObject(i);
 
+
                 notificaciones.setIdMensajeNotif( jsonObject.optString( "Mens_mensaje_envio" ) );
                 notificaciones.setMens_id_usu_envia( jsonObject.optString( "Mens_id_usu_envia" ) );
+                notificaciones.setMens_bandera_nueva_notificacion( jsonObject.optString( "Mens_bandera_nueva_notificacion" ) );
 
-
-
-                listarNotificaciones.add(notificaciones);
             }
-            dialog.hide();
+
+            if(notificaciones.getMens_bandera_nueva_notificacion().equals( "0" )){
+                //Toast.makeText(getApplicationContext(), "Rojo ", Toast.LENGTH_SHORT).show();
+                Drawable myIcon = getResources().getDrawable( R.drawable.ic_action_campananegra ); ColorFilter filter = new LightingColorFilter( Color.RED, Color.RED); myIcon.setColorFilter(filter);
+
+            }
+            else {
+               // Toast.makeText(getApplicationContext(), "Gris", Toast.LENGTH_SHORT).show();
+                Drawable myIcon = getResources().getDrawable( R.drawable.ic_action_campananegra ); ColorFilter filter = new LightingColorFilter( Color.GRAY, Color.GRAY); myIcon.setColorFilter(filter);
+            }
+
             Notificaciones_adapter adapter=new Notificaciones_adapter(listarNotificaciones, getApplicationContext());
-          //  adapter.notifyDataSetChanged();
+            //  adapter.notifyDataSetChanged();
 
-            RecyclerNotificaciones =(RecyclerView) findViewById( R.id.RecyclerNotificaciones );
-            RecyclerNotificaciones.setHasFixedSize( true );
-            RecyclerNotificaciones.setLayoutManager( new LinearLayoutManager( this ) );
-
-            adapter.setOnClickListener( new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-
-                  //  Toast.makeText(getApplicationContext(), "Selección: "+listarNotificaciones.get(RecyclerNotificaciones.getChildAdapterPosition(v)).getMens_id_usu_envia(),Toast.LENGTH_SHORT).show();
-
-                    String id_usuario = listarNotificaciones.get(RecyclerNotificaciones.getChildAdapterPosition(v)).getMens_id_usu_envia();
-                    ConsultarToken(id_usuario);
-                }
-            } );
-
-            RecyclerNotificaciones.setLayoutManager(new LinearLayoutManager( this ) );
-            Collections.reverse(listarNotificaciones);
-
-            RecyclerNotificaciones.setAdapter(adapter);
-
-
-
+            RecyclerNotificaciones.setLayoutManager( new LinearLayoutManager( getApplicationContext() ) );
 
 
 
@@ -299,8 +334,6 @@ public class MainActivity extends AppCompatActivity
         Log.d("ERROR: ", error.toString());
 
     }
-
-
 
     private void ConsultarToken(String id_usuario){
 
@@ -336,7 +369,6 @@ public class MainActivity extends AppCompatActivity
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(MainActivity.this,"No tienes notificaciones", Toast.LENGTH_SHORT).show();
 
-
             }
         });
 
@@ -344,8 +376,8 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-        private void PasoAFragmentResponderNotificacion(String TokenUsuarioEnvia, String IdUsuariEnvia){
 
+        private void PasoAFragmentResponderNotificacion(String TokenUsuarioEnvia, String IdUsuariEnvia){
 
         fracment_responder_notificacion responder_notificacion = new fracment_responder_notificacion();
 
@@ -360,10 +392,88 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction.add(R.id.content_main,responder_notificacion,null);
             fragmentTransaction.commit();
 
-
-
-
         }
+
+
+    private void ListarEnRecyclerView(){
+
+        String url ="http://bigencode.com/ubot/notificaciones/listar_notificaciones.php?Mens_id_usu_recibe=20";
+
+        JsonObjectRequest request = new JsonObjectRequest( Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+                String concepto;
+                Notificaciones notificaciones = null;
+
+                JSONArray json=response.optJSONArray("datos");
+
+                try {
+
+                    for (int i=0;i<json.length();i++){
+                        notificaciones=new Notificaciones();
+                        JSONObject jsonObject=null;
+                        jsonObject=json.getJSONObject(i);
+
+                        notificaciones.setIdMensajeNotif( jsonObject.optString( "Mens_mensaje_envio" ) );
+                        notificaciones.setMens_id_usu_envia( jsonObject.optString( "Mens_id_usu_envia" ) );
+                        notificaciones.setMens_bandera_nueva_notificacion( jsonObject.optString( "Mens_bandera_nueva_notificacion" ) );
+
+
+                        listarNotificaciones.add(notificaciones);
+
+                    }
+
+                  //  dialog.hide();
+                    Notificaciones_adapter adapter=new Notificaciones_adapter(listarNotificaciones, getApplicationContext());
+                    //  adapter.notifyDataSetChanged();
+
+                    RecyclerNotificaciones =(RecyclerView) findViewById( R.id.RecyclerNotificaciones );
+                    RecyclerNotificaciones.setHasFixedSize( true );
+                    RecyclerNotificaciones.setLayoutManager( new LinearLayoutManager( getApplicationContext() ) );
+
+                    adapter.setOnClickListener( new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            //  Toast.makeText(getApplicationContext(), "Selección: "+listarNotificaciones.get(RecyclerNotificaciones.getChildAdapterPosition(v)).getMens_id_usu_envia(),Toast.LENGTH_SHORT).show();
+
+                            String id_usuario = listarNotificaciones.get(RecyclerNotificaciones.getChildAdapterPosition(v)).getMens_id_usu_envia();
+                            ConsultarToken(id_usuario);
+                        }
+                    } );
+
+                    RecyclerNotificaciones.setLayoutManager(new LinearLayoutManager( getApplicationContext()) );
+                    Collections.reverse(listarNotificaciones);
+
+                    RecyclerNotificaciones.setAdapter(adapter);
+
+                    // Toast.makeText(getApplicationContext(), "Mens: ", Toast.LENGTH_SHORT).show();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(), "No se ha podido establecer conexión con el servidor", Toast.LENGTH_SHORT).show();
+
+                    dialog.hide();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MainActivity.this,"No tienes notificaciones", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        rq.add(request);
+
+    }
+
+
+
+
+
 
 
 }
