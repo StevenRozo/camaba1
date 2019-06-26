@@ -52,6 +52,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.camaba1.camaba1.adapter.Notificaciones_adapter;
 import com.example.camaba1.camaba1.entidades.Notificaciones;
@@ -82,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   //  ArrayList<String> lista = new ArrayList<String>(  );
 
     ListView lista_resultado;
-    String TokenUsuario,IdUsuarioEnvia;
+    String TokenUsuario,IdUsuarioEnvia,Mens_id;
 
     // RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
@@ -133,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
 
+
     }
 
     public class time extends AsyncTask<Void,Integer,Boolean> {
@@ -171,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void hilo(){
         try {
-            Thread.sleep(3000);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -267,7 +269,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         dialog.setMessage("Consultando Historial");
        // dialog.show();
 
-        String url="http://bigencode.com/ubot/notificaciones/listar_notificaciones.php?Mens_id_usu_recibe=20";
+        String url="http://bigencode.com/ubot/notificaciones/listar_notificaciones.php?Mens_id_usu_recibe=19";
         jsonObjectRequest=new JsonObjectRequest(Request.Method.GET,url,null, this,this);
         // request.add(jsonObjectRequest);
         VolleySingleton.getIntanciaVolley(MainActivity.this).addToRequestQueue(jsonObjectRequest);
@@ -293,6 +295,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 notificaciones.setMens_id_usu_envia( jsonObject.optString( "Mens_id_usu_envia" ) );
                 notificaciones.setMens_bandera_nueva_notificacion( jsonObject.optString( "Mens_bandera_nueva_notificacion" ) );
 
+
+
             }
 
             if(notificaciones.getMens_bandera_nueva_notificacion().equals( "0" )){
@@ -303,15 +307,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             else {
                // Toast.makeText(getApplicationContext(), "Gris", Toast.LENGTH_SHORT).show();
                 Drawable myIcon = getResources().getDrawable( R.drawable.ic_action_campananegra ); ColorFilter filter = new LightingColorFilter( Color.GRAY, Color.GRAY); myIcon.setColorFilter(filter);
+
             }
 
-            Notificaciones_adapter adapter=new Notificaciones_adapter(listarNotificaciones, getApplicationContext());
-            //  adapter.notifyDataSetChanged();
-
             RecyclerNotificaciones.setLayoutManager( new LinearLayoutManager( getApplicationContext() ) );
-
-
-
 
             // Toast.makeText(getApplicationContext(), "Mens: ", Toast.LENGTH_SHORT).show();
 
@@ -319,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), "No se ha podido establecer conexión con el servidor", Toast.LENGTH_SHORT).show();
 
-            dialog.hide();
+
         }
 
     }
@@ -397,7 +396,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void ListarEnRecyclerView(){
 
-        String url ="http://bigencode.com/ubot/notificaciones/listar_notificaciones.php?Mens_id_usu_recibe=20";
+        String url ="http://bigencode.com/ubot/notificaciones/listar_notificaciones.php?Mens_id_usu_recibe=19";
 
         JsonObjectRequest request = new JsonObjectRequest( Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
@@ -415,10 +414,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         JSONObject jsonObject=null;
                         jsonObject=json.getJSONObject(i);
 
+                        notificaciones.setMens_id( jsonObject.optString( "Mens_id" ) );
                         notificaciones.setIdMensajeNotif( jsonObject.optString( "Mens_mensaje_envio" ) );
                         notificaciones.setMens_id_usu_envia( jsonObject.optString( "Mens_id_usu_envia" ) );
                         notificaciones.setMens_bandera_nueva_notificacion( jsonObject.optString( "Mens_bandera_nueva_notificacion" ) );
 
+
+                        Mens_id = notificaciones.getMens_id();
 
                         listarNotificaciones.add(notificaciones);
 
@@ -440,6 +442,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                             String id_usuario = listarNotificaciones.get(RecyclerNotificaciones.getChildAdapterPosition(v)).getMens_id_usu_envia();
                             ConsultarToken(id_usuario);
+                            actualizar_bandera_color(Mens_id);
                         }
                     } );
 
@@ -471,8 +474,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
+    private void actualizar_bandera_color(String Mens_id){
+        notificaciones notificaciones = new notificaciones();
 
+        StringRequest stringRequest = new StringRequest( Request.Method.POST, "http://bigencode.com/ubot/notificaciones/actualizar_bandera_color.php?Mens_id="+Mens_id, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+               // Toast.makeText(MainActivity.this,"Cambio ok", Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MainActivity.this,"Error al conectarse", Toast.LENGTH_SHORT).show();
+            }
+        });
 
+        RequestQueue requestQueue = Volley.newRequestQueue( getApplicationContext() );
+        requestQueue.add(stringRequest);
+
+    }
 
 
 

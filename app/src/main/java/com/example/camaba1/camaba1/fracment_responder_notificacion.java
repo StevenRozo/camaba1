@@ -84,7 +84,7 @@ public class fracment_responder_notificacion extends Fragment {
 
     private void enviarTokenToServer(final String Cuerpo, String TokenUsuariEnvia,String IdUsuarioEnviaD) {
 
-        GuardarNotificacion("20",IdUsuarioEnviaD,Cuerpo,"1");
+        GuardarNotificacion("19",IdUsuarioEnviaD,Cuerpo,"1");
 
         StringRequest stringRequest = new StringRequest( Request.Method.POST, "http://bigencode.com/ubot/notificaciones/enviarNotificacion.php?token="+TokenUsuariEnvia, new Response.Listener<String>() {
             @Override

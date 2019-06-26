@@ -2,7 +2,16 @@ package com.example.camaba1.camaba1.entidades;
 
 public class Notificaciones {
 
-    private String idMensajeNotif,Mens_id_usu_envia,Mens_bandera_nueva_notificacion;
+    private String Mens_id,idMensajeNotif,Mens_id_usu_envia,Mens_bandera_nueva_notificacion;
+
+
+    public String getMens_id() {
+        return Mens_id;
+    }
+
+    public void setMens_id(String mens_id) {
+        Mens_id = mens_id;
+    }
 
     public String getMens_bandera_nueva_notificacion() {
         return Mens_bandera_nueva_notificacion;
